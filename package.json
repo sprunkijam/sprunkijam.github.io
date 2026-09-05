@@ -1,0 +1,26 @@
+{
+  "name": "sprunki-jam",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Sprunki and Rainbow Friends Jam — cheerful phases that get stranger and stranger. Surprises… just as Mr. Black planned. Works on modern browsers, phones, tablets, and desktop. Not affiliated with Sprunki / Incredibox.",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "npm ci && tsc --noEmit && vite build --base=./",
+    "build:absolute": "npm ci && tsc --noEmit && vite build --base=/",
+    "preview": "vite preview --host --port 4173",
+    "deploy": "npm run build && wrangler deploy",
+    "test:smoke": "playwright test",
+    "test": "npm run test:smoke"
+  },
+  "dependencies": {
+    "pixi.js": "^8.8.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vite-plugin-pwa": "^0.21.2",
+    "wrangler": "^4.127.1"
+  }
+}

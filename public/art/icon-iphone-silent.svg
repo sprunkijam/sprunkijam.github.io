@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-hidden="true">
+  <title>Silent is ON — orange showing, or Silent setting on</title>
+  <rect x="22" y="8" width="36" height="64" rx="10" fill="#2a1a22" stroke="#fff1c8" stroke-width="2.4"/>
+  <rect x="26" y="14" width="28" height="46" rx="4" fill="#7ec8ff"/>
+  <rect x="34" y="64" width="12" height="3.2" rx="1.6" fill="#fff1c8" opacity="0.55"/>
+  <rect x="12" y="22" width="12" height="8" rx="3" fill="#ff8a00" stroke="#ffe7a0" stroke-width="1.4"/>
+  <circle cx="17" cy="26" r="2.4" fill="#fff4d0"/>
+  <rect x="18" y="20" width="5" height="12" rx="1.4" fill="#ff7a18"/>
+  <path d="M40 58.5c-5.2 0-8.2-3.2-8.2-3.2l.8-1.4s2.4 2.2 7.4 2.2 7.4-2.2 7.4-2.2l.8 1.4s-3 3.2-8.2 3.2z" fill="#ffd15a"/>
+  <path d="M34.5 48.5c0-5.4 2.2-9.2 5.5-9.2s5.5 3.8 5.5 9.2c0 0 3.2 3.4 3.2 5.2H31.3c0-1.8 3.2-5.2 3.2-5.2z" fill="#ffe566"/>
+  <circle cx="40" cy="38.6" r="1.7" fill="#ffe566"/>
+  <path d="M31 40.5 L49 57.5" stroke="#c01828" stroke-width="3.2" stroke-linecap="round"/>
+</svg>

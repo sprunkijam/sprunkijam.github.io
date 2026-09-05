@@ -1,0 +1,21 @@
+# HTML + SW + manifest + version.json must not stick in a stale cache so
+# players pick up new deploys without a hard refresh. no-store beats
+# a stuck service worker that served an old HTML shell.
+/
+  Cache-Control: no-store, max-age=0, must-revalidate
+
+/index.html
+  Cache-Control: no-store, max-age=0, must-revalidate
+
+/sw.js
+  Cache-Control: no-store, max-age=0, must-revalidate
+
+/manifest.webmanifest
+  Cache-Control: no-store, max-age=0, must-revalidate
+
+/version.json
+  Cache-Control: no-store, max-age=0, must-revalidate
+
+# Hashed Vite chunks — safe to cache forever.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

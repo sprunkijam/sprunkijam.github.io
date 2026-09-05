@@ -1,0 +1,17 @@
+node_modules
+dist
+.DS_Store
+*.log
+.vite
+.wrangler/
+.dev.vars
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/intro-portraits/
+/oren-icons/
+/rainbow-friends/
+
+/new-portraits-p1p2/
+/phase-backgrounds/

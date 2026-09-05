@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" translate="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#140810" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- Kept for Edge + Safari Add to Home Screen on iOS (both use WebKit / these tags). -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Sprunki RF Jam" />
+    <meta name="msapplication-TileColor" content="#140810" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="google" content="notranslate" />
+    <meta name="robots" content="index, follow" />
+    <meta
+      name="description"
+      content="Sprunki and Rainbow Friends Jam — cheerful phases that get stranger and stranger. A smiling sun, stacking tunes, and surprises… just as Mr. Black planned. No ads."
+    />
+    <title>Sprunki and Rainbow Friends Jam</title>
+    <!-- PNG favicons (Oren) — more reliable than SVG for iPhone Edge / Safari home-screen. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="%BASE_URL%favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="%BASE_URL%favicon-48.png" />
+    <link rel="shortcut icon" href="%BASE_URL%favicon-32.png" />
+    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+    <script>
+      /* Window-box photo pick before first paint — not screen.orientation. */
+      (function () {
+        var portrait = window.innerHeight > window.innerWidth;
+        document.documentElement.dataset.windowOrient = portrait ? "portrait" : "landscape";
+        window.__jamHeroRing = portrait
+          ? "%BASE_URL%art/intro-ring-portrait-title.jpeg"
+          : "%BASE_URL%art/intro-ring-landscape-title.jpeg";
+        window.__jamHeroDark = portrait
+          ? "%BASE_URL%art/intro-black-vineria-portrait-title.jpeg"
+          : "%BASE_URL%art/intro-black-vineria-landscape-title.jpeg";
+      })();
+    </script>
+    <link rel="preload" as="image" href="%BASE_URL%art/intro-ring-title.jpeg" />
+    <link rel="preload" as="image" href="%BASE_URL%art/intro-black-vineria-title.jpeg" />
+    <style>
+      /* Immediate paint before CSS module loads — avoids white flash in Edge. */
+      html,
+      body {
+        margin: 0;
+        background: #140810;
+        height: 100%;
+        height: 100svh;
+        height: 100dvh;
+      }
+    </style>
+  </head>
+  <body data-phase="1" translate="no">
+    <div id="stage-root"></div>
+
+    <div id="hud">
+      <div class="hud-left">
+        <button id="reset-btn" type="button" aria-label="Reset to sunny jam">RESET</button>
+        <button id="secret-btn" type="button">Secret game 🤫</button>
+      </div>
+      <div class="hud-center">
+        <div id="phase-badge" aria-live="polite">
+          <span class="phase-label">PHASE</span>
+          <span id="phase-num">1</span>
+        </div>
+        <div id="secret-scoreboard" hidden aria-live="polite">
+          <span class="secret-score-label">SCORE</span>
+          <span id="secret-score">0</span>
+          <div id="secret-lives" class="secret-lives" aria-label="3 tries left">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div id="skip-dial" hidden aria-label="Jump to phase">
+          <button type="button" data-phase="2">2</button>
+          <button type="button" data-phase="10">10</button>
+          <button type="button" data-phase="100">100</button>
+          <button type="button" data-phase="1000">1,000</button>
+          <button type="button" data-phase="100000">100,000</button>
+        </div>
+        <button id="secret-exit-btn" type="button" hidden>BACK TO JAM</button>
+      </div>
+    </div>
+
+    <div id="secret-over" hidden>
+      <div class="secret-over-card">
+        <p class="secret-over-title">Game over</p>
+        <p class="secret-over-line">Score <span id="secret-over-score">0</span></p>
+        <p class="secret-over-line">Highest <span id="secret-over-high">0</span></p>
+        <button id="secret-again-btn" type="button">PLAY AGAIN</button>
+        <button id="secret-over-exit" type="button">BACK TO JAM</button>
+      </div>
+    </div>
+
+    <div id="hint" class="hint">Drag friends onto the stage. Drop the tall hat last…</div>
+
+    <button
+      id="silent-tip"
+      type="button"
+      class="silent-tip"
+      hidden
+      aria-label="Dismiss quiet and Home Screen tip"
+    >
+      Still quiet? Silent OFF (switch or setting), then Volume up.
+      Full screen: Share → Add to Home Screen.
+    </button>
+
+    <div id="gate" data-hero="ring">
+      <div class="gate-hero" id="gate-hero">
+        <img
+          class="gate-hero-img is-active"
+          id="hero-ring"
+          src="%BASE_URL%art/intro-ring-title.jpeg"
+          alt="Pinki and Oren exchanging a diamond ring in a sunny garden"
+          width="4000"
+          height="2666"
+          decoding="async"
+          fetchpriority="high"
+        />
+        <img
+          class="gate-hero-img"
+          id="hero-dark"
+          src="%BASE_URL%art/intro-black-vineria-title.jpeg"
+          alt="Mr. Black and Vineria in a sunny field"
+          width="4000"
+          height="2666"
+          decoding="async"
+          fetchpriority="low"
+        />
+        <script>
+          (function () {
+            var ring = document.getElementById("hero-ring");
+            var dark = document.getElementById("hero-dark");
+            if (ring && window.__jamHeroRing) {
+              ring.src = window.__jamHeroRing;
+              ring.onerror = function () {
+                ring.onerror = null;
+                ring.src = "%BASE_URL%art/intro-ring-title.jpeg";
+              };
+            }
+            if (dark && window.__jamHeroDark) {
+              dark.src = window.__jamHeroDark;
+              dark.onerror = function () {
+                dark.onerror = null;
+                dark.src = "%BASE_URL%art/intro-black-vineria-title.jpeg";
+              };
+            }
+          })();
+        </script>
+      </div>
+      <div class="gate-scrim" aria-hidden="true"></div>
+      <div class="gate-glow" aria-hidden="true"></div>
+      <!-- Easter eggs: below .gate-card (5) and .jam-dock (6) so they never steal TAP TO JAM. -->
+      <button
+        id="ring-hotspot"
+        type="button"
+        aria-label="Tap the diamond ring"
+        title="Tap the ring"
+      ></button>
+      <button
+        id="hat-hotspot"
+        type="button"
+        aria-label="Tap Mr. Black's top hat"
+        title="Tap the tall hat"
+      ></button>
+      <div class="gate-card">
+        <h1>SPRUNKI AND<br />RAINBOW FRIENDS<br />JAM</h1>
+      </div>
+      <div class="jam-dock">
+        <!-- Welcome crawl sits in the dock so hero hotspots stay tappable under the H1. -->
+        <div
+          id="welcome-marquee"
+          class="welcome-marquee"
+          role="region"
+          aria-label="Welcome to Sprunki and Rainbow Friends Jam"
+        >
+          <div class="welcome-marquee-viewport">
+            <div class="welcome-marquee-track">
+              <div class="welcome-marquee-copy">
+                <p>
+                  Welcome to Sprunki and Rainbow Friends Jam, where every phase is a brand-new burst of
+                  fun. Phase 1 starts with cheerful Sprunkis bouncing around, Rainbow Friends exploring
+                  the meadow, and a sun that smiles just a little too enthusiastically — like it’s been
+                  waiting for this moment for a very, very long time. As the phases roll forward, the
+                  Sprunkis discover new sounds that get stranger and stranger, stacking into tunes that
+                  somehow feel both playful and… oddly organized. The sky changes colors in dramatic
+                  swirls, and Mr. Tree keeps striking poses. By the time you reach the highest phases,
+                  the sun has transformed into a giant eye watching over the world with friendly
+                  curiosity, and Mr. Tree’s exciting expressions settle into shapes that feel like
+                  inside jokes you’re not sure you were supposed to understand.
+                </p>
+                <p>Everything stays bright, exciting, and full of surprises — just as Mr. Black planned.</p>
+                <p class="welcome-marquee-divider" aria-hidden="true">──────── 💎 ────────</p>
+              </div>
+              <div class="welcome-marquee-copy" aria-hidden="true">
+                <p>
+                  Welcome to Sprunki and Rainbow Friends Jam, where every phase is a brand-new burst of
+                  fun. Phase 1 starts with cheerful Sprunkis bouncing around, Rainbow Friends exploring
+                  the meadow, and a sun that smiles just a little too enthusiastically — like it’s been
+                  waiting for this moment for a very, very long time. As the phases roll forward, the
+                  Sprunkis discover new sounds that get stranger and stranger, stacking into tunes that
+                  somehow feel both playful and… oddly organized. The sky changes colors in dramatic
+                  swirls, and Mr. Tree keeps striking poses. By the time you reach the highest phases,
+                  the sun has transformed into a giant eye watching over the world with friendly
+                  curiosity, and Mr. Tree’s exciting expressions settle into shapes that feel like
+                  inside jokes you’re not sure you were supposed to understand.
+                </p>
+                <p>Everything stays bright, exciting, and full of surprises — just as Mr. Black planned.</p>
+                <p class="welcome-marquee-divider" aria-hidden="true">──────── 💎 ────────</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Collapsed by default so TAP TO JAM stays clear. Expand for sound + Home Screen tips. -->
+        <details id="gate-help" class="gate-help">
+          <summary id="gate-help-summary">Sound &amp; full screen help</summary>
+          <div class="gate-help-body">
+            <!-- Sound help — primary platform filled by JS; taps must not start the jam. -->
+            <div id="sound-guide" class="sound-guide" role="note" data-mode="calm">
+              <p id="sound-guide-lead" class="sound-guide-lead">iPhone sound</p>
+              <div id="sound-guide-primary">
+                <ul class="sound-guide-steps">
+                  <li class="sound-guide-step">
+                    <span class="sound-guide-icons" aria-hidden="true">
+                      <img
+                        src="%BASE_URL%art/icon-iphone-silent.svg"
+                        alt=""
+                        width="56"
+                        height="56"
+                        decoding="async"
+                      />
+                      <span class="sound-guide-arrow">→</span>
+                      <img
+                        src="%BASE_URL%art/icon-iphone-sound.svg"
+                        alt=""
+                        width="56"
+                        height="56"
+                        decoding="async"
+                      />
+                    </span>
+                    <span class="sound-guide-text">
+                      Silent OFF — older: hide orange on the side switch. Newer: Action button, Control Center, or Settings.
+                    </span>
+                  </li>
+                  <li class="sound-guide-step">
+                    <img
+                      src="%BASE_URL%art/icon-volume-up.svg"
+                      alt=""
+                      width="56"
+                      height="56"
+                      decoding="async"
+                    />
+                    <span class="sound-guide-text">Then Volume up.</span>
+                  </li>
+                  <li class="sound-guide-step sound-guide-tap">
+                    <span class="sound-guide-text">Tap anywhere on this screen to turn the music on.</span>
+                  </li>
+                </ul>
+              </div>
+              <details id="sound-guide-other" class="sound-guide-other">
+                <summary>Other devices</summary>
+                <ul id="sound-guide-other-list"></ul>
+              </details>
+              <p id="sound-guide-nudge" class="sound-guide-nudge" hidden aria-live="polite"></p>
+            </div>
+            <!-- Full-screen tip — primary platform filled by JS; taps must not start the jam. -->
+            <div id="play-guide" class="play-guide" role="note">
+              <p id="play-guide-lead" class="play-guide-lead">Best played in full screen</p>
+              <div id="play-guide-primary">
+                <p class="play-guide-body">
+                  <strong>iPhone / iPad · Edge:</strong> three dots → Share → scroll to the bottom → Add to
+                  Home Screen. Then open the new Home Screen icon.
+                </p>
+              </div>
+              <details id="play-guide-other" class="play-guide-other">
+                <summary>Other devices</summary>
+                <ul id="play-guide-other-list"></ul>
+              </details>
+            </div>
+          </div>
+        </details>
+        <p id="gate-error" class="gate-error" hidden role="alert"></p>
+        <button id="jam-btn" type="button">TAP TO JAM</button>
+        <!-- Quiet meta under TAP TO JAM (safe above browser bottom chrome). -->
+        <div id="title-meta" class="title-meta">
+          <p id="build-version" class="build-version" aria-hidden="true"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="intro-moment" hidden data-kind="ring">
+      <div class="intro-moment-art">
+        <img
+          id="intro-moment-img"
+          src="%BASE_URL%art/intro-ring-title.jpeg"
+          alt="Pinki and Oren with a diamond ring"
+          width="864"
+          height="1152"
+          decoding="async"
+        />
+      </div>
+      <div class="intro-sparkles" aria-hidden="true"></div>
+      <p class="intro-moment-credit" id="intro-moment-credit">Diamond ring</p>
+    </div>
+
+    <div id="scare" hidden>
+      <div id="scare-face" aria-hidden="true"></div>
+    </div>
+
+    <div id="update-flash" hidden role="status" aria-live="polite">Updating…</div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
